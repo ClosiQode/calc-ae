@@ -8,6 +8,7 @@ class UpdateManager {
     this.updateAvailable = false;
     this.updateDownloaded = false;
     this.autoInstallAfterDownload = false;
+    this._bootResolve = null; // résolveur pour le flux de démarrage (gating)
 
     // Logger
     autoUpdater.logger = console;
@@ -69,13 +70,16 @@ class UpdateManager {
           } catch (e) {
             console.error('Erreur téléchargement mise à jour:', e);
             this._send('update:error', { message: String(e && e.message || e) });
+            if (this._bootResolve) { this._bootResolve('proceed'); this._bootResolve = null; }
           }
         } else {
           // Refus : continuer sans MAJ
           this._send('update:deferred', info);
+          if (this._bootResolve) { this._bootResolve('proceed'); this._bootResolve = null; }
         }
       } catch (e) {
         console.error('Erreur lors de la demande de confirmation MAJ:', e);
+        if (this._bootResolve) { this._bootResolve('proceed'); this._bootResolve = null; }
       }
     });
 
@@ -83,6 +87,7 @@ class UpdateManager {
       console.log('✅ Pas de mise à jour disponible:', info);
       this.updateAvailable = false;
       this._send('update:none', info);
+      if (this._bootResolve) { this._bootResolve('proceed'); this._bootResolve = null; }
     });
 
     autoUpdater.on('error', (err) => {
@@ -90,6 +95,7 @@ class UpdateManager {
       this.updateAvailable = false;
       this.updateDownloaded = false;
       this._send('update:error', { message: String(err && err.message || err) });
+      if (this._bootResolve) { this._bootResolve('proceed'); this._bootResolve = null; }
     });
 
     autoUpdater.on('download-progress', (p) => {
@@ -116,6 +122,30 @@ class UpdateManager {
         resolve(!err);
       });
     });
+  }
+
+  // Utilisé AVANT la création de la fenêtre principale pour bloquer le démarrage
+  async checkBeforeStart() {
+    try {
+      const online = await this._hasNetwork();
+      if (!online) {
+        // pas de réseau → on laisse démarrer
+        return 'proceed';
+      }
+      return await new Promise(async (resolve) => {
+        this._bootResolve = (v) => resolve(v || 'proceed');
+        try {
+          await autoUpdater.checkForUpdates();
+        } catch (e) {
+          console.error('Update check (boot) failed:', e);
+          if (this._bootResolve) { this._bootResolve('proceed'); this._bootResolve = null; }
+        }
+        // Note: si une MAJ est trouvée et acceptée, l’app quittera lors de 'update-downloaded'
+      });
+    } catch (e) {
+      console.error('checkBeforeStart error:', e);
+      return 'proceed';
+    }
   }
 
   checkForUpdatesOnStartup() {

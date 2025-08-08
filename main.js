@@ -173,11 +173,23 @@ function createOptionsWindow() {
   return optionsWin;
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
+  // Initialiser l’updater et bloquer le démarrage tant que la décision n’est pas prise
+  const updatesEnabled = String(process.env.CALCAE_UPDATES || 'on').toLowerCase() !== 'off';
+  if (app.isPackaged && updatesEnabled) {
+    try {
+      if (!updateManager) updateManager = new UpdateManager();
+      // Pas de fenêtre encore: le dialog utilise la fenêtre principale si dispo, sinon il sera modal global.
+      await updateManager.checkBeforeStart();
+    } catch (e) {
+      console.error('Erreur gating MAJ au démarrage:', e);
+    }
+  }
+
+  // Une fois OK → créer la fenêtre et le menu
   createMainWindow();
   createMenu();
-  // Vérification de mise à jour au démarrage (désactivable via CALCAE_UPDATES=off)
-  const updatesEnabled = String(process.env.CALCAE_UPDATES || 'on').toLowerCase() !== 'off';
+  // En complément, on garde la vérification décalée si jamais désactivée ci-dessus
   if (app.isPackaged && updatesEnabled) {
     setTimeout(() => { try { updateManager && updateManager.checkForUpdatesOnStartup(); } catch (e) { console.error(e); } }, 5000);
   }
