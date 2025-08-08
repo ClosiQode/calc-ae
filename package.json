@@ -1,0 +1,73 @@
+{
+  "name": "calc-ae",
+  "productName": "Calc AE",
+  "version": "1.0.0",
+  "description": "Calcul des charges sociales et fiscales (VL, CFP, CCI) d'un auto-entrepreneur. HTML/CSS/JS pur, packagé avec Electron.",
+  "main": "main.js",
+  "author": "",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "prebuild": "node build-icons.js",
+    "build": "npm run prebuild && electron-builder -w",
+    "build:win": "npm run prebuild && electron-builder -w",
+    "build:mac": "electron-builder -m",
+    "build:linux": "electron-builder -l"
+  },
+  "build": {
+    "appId": "com.calc.ae",
+    "productName": "Calc AE",
+    "files": [
+      "**/*",
+      "!**/node_modules/.cache/**"
+    ],
+    "asar": true,
+    "extraResources": [
+      "logo.jpeg",
+      "build/icons/**"
+    ],
+    "directories": {
+      "buildResources": "."
+    },
+    "win": {
+      "target": ["nsis"],
+      "icon": "build/icons/icon.ico"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": false,
+      "installerIcon": "build/icons/icon.ico",
+      "uninstallerIcon": "build/icons/icon.ico"
+    },
+    "mac": {
+      "category": "public.app-category.productivity",
+      "icon": "build/icons/icon.icns"
+    },
+    "linux": {
+      "target": ["AppImage"],
+      "icon": "build/icons/png",
+      "category": "Office"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "ClosiQode",
+        "repo": "calc-ae",
+        "private": true
+      }
+    ]
+  },
+  "devDependencies": {
+    "electron": "^30.0.0",
+    "electron-builder": "^24.13.3",
+    "sharp": "^0.33.4",
+    "png-to-ico": "^2.1.8",
+    "icon-gen": "^3.0.1"
+  },
+  "dependencies": {
+    "electron-updater": "^6.6.2"
+  }
+}

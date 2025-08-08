@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calculatrice Auto-entrepreneur</title>
+  <meta name="description" content="Calculez les charges sociales et la VL d'un auto-entrepreneur (août 2025) en mode simple ou mixte. HTML/CSS/JS pur." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="container">
+    <div class="card header-card">
+      <h1>Calculatrice Auto-entrepreneur</h1>
+      <p class="muted">Calculez rapidement vos charges sociales et fiscales (VL) en <strong>mode Simple</strong> ou <strong>mode Mixte</strong>, avec options de <strong>taux personnalisés</strong> et <strong>CFP</strong>. 100% JavaScript pur.</p>
+    </div>
+  </header>
+
+  <main class="container grid">
+    <!-- Paramètres (gauche) -->
+    <section class="card">
+      <div class="section-header">
+        <h2>Calculatrice</h2>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <span id="statusBadge" class="badge badge-muted">Calcul à jour</span>
+          <button id="btnOpenOptions" class="btn btn-secondary">Options avancées</button>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="label">Mode de déclaration</label>
+        <div class="radio-row">
+          <label class="radio">
+            <input type="radio" name="mode" value="simple" checked>
+            <span>Simple</span>
+          </label>
+          <label class="radio">
+            <input type="radio" name="mode" value="mixte">
+            <span>Mixte</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Zone Simple -->
+      <div id="zoneSimple" class="zone">
+        <div class="field-group">
+          <label for="caSimple" class="label">Chiffre d'affaires (€)</label>
+          <input id="caSimple" type="number" min="0" step="0.01" placeholder="0,00" inputmode="decimal">
+        </div>
+        <div class="field-group">
+          <label for="catSimple" class="label">Catégorie</label>
+          <select id="catSimple">
+            <option value="VENTES">VENTES / achat-revente</option>
+            <option value="BIC">BIC prestations de services</option>
+            <option value="BNC">BNC prestations</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Zone Mixte -->
+      <div id="zoneMixte" class="zone" hidden>
+        <div class="field-group">
+          <label for="caVentes" class="label">CA VENTES (€)</label>
+          <input id="caVentes" type="number" min="0" step="0.01" placeholder="0,00" inputmode="decimal">
+        </div>
+        <div class="field-group">
+          <label for="caBic" class="label">CA BIC prestations (€)</label>
+          <input id="caBic" type="number" min="0" step="0.01" placeholder="0,00" inputmode="decimal">
+        </div>
+        <div class="field-group">
+          <label for="caBnc" class="label">CA BNC prestations (€)</label>
+          <input id="caBnc" type="number" min="0" step="0.01" placeholder="0,00" inputmode="decimal">
+        </div>
+      </div>
+    </section>
+
+    
+    <!-- Résultats (droite) -->
+
+    <!-- Résultats -->
+    <section class="card">
+      <h2>Résultats</h2>
+      <div class="results">
+        <div class="result-line">
+          <span class="result-label">Chiffre d'affaires total</span>
+          <span id="resCATotal" class="result-value">€ 0,00</span>
+        </div>
+
+        <div class="divider" data-mixte-only></div>
+
+        <div class="result-line" data-row="VENTES" data-mixte-only>
+          <span class="result-label">Charges sociales VENTES</span>
+          <span id="resVentesSocial" class="result-value">€ 0,00</span>
+        </div>
+        <div class="result-line" data-row="BIC" data-mixte-only>
+          <span class="result-label">Charges sociales BIC</span>
+          <span id="resBicSocial" class="result-value">€ 0,00</span>
+        </div>
+        <div class="result-line" data-row="BNC" data-mixte-only>
+          <span class="result-label">Charges sociales BNC</span>
+          <span id="resBncSocial" class="result-value">€ 0,00</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="result-line">
+          <span class="result-label">Charges sociales totales</span>
+          <span id="resSocialTotal" class="result-value">€ 0,00</span>
+        </div>
+        <div class="result-line">
+          <span class="result-label">Impôt (VL total)</span>
+          <span id="resVLTotal" class="result-value">€ 0,00</span>
+        </div>
+        <div class="result-line">
+          <span class="result-label">Taxe CCI totale</span>
+          <span id="resCCITotal" class="result-value">€ 0,00</span>
+        </div>
+        <div class="result-line">
+          <span class="result-label">CFP totale</span>
+          <span id="resCFPTotal" class="result-value">€ 0,00</span>
+        </div>
+        <div class="result-line emphasis">
+          <span class="result-label">Total des charges</span>
+          <span id="resChargesTotal" class="result-value highlight">€ 0,00</span>
+        </div>
+        <div class="result-line emphasis">
+          <span class="result-label">Revenu net estimé</span>
+          <span id="resNet" class="result-value success">€ 0,00</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Actions (export) -->
+    <section class="card">
+      <div class="button-row">
+        <button id="btnExportPdf" class="btn btn-primary">Exporter PDF</button>
+        <div class="spacer"></div>
+        <button id="btnExportHtml" class="btn btn-secondary">Exporter HTML</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="container">
+    <div class="card footer-card">
+      <small class="muted">Mise à jour: août 2025 – Taux par défaut: VENTES 12,3% + VL 1,0% (+ CCI vente 0,02%) | BIC prestations 21,2% + VL 1,7% (+ CCI prestation 0,04%) | BNC prestations 24,6% + VL 2,2% | CFP par défaut: 0,10%.</small>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

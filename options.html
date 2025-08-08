@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Options avancées</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body { padding-top: 6px; }
+    .footer-note { margin-top: 10px; font-size: .9rem; }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="card">
+      <div class="section-header">
+        <h2>Options avancées</h2>
+        <button id="btnClose" class="btn btn-secondary">Fermer</button>
+      </div>
+
+      <div class="field-group">
+        <label for="roundMode" class="label">Règle d’arrondi</label>
+        <select id="roundMode">
+          <option value="none">Aucun (centimes conservés)</option>
+          <option value="floor">À l’euro inférieur (troncature)</option>
+          <option value="ceil">À l’euro supérieur</option>
+          <option value="nearest">À l’euro le plus proche</option>
+        </select>
+        <small class="muted">Astuce: le portail URSSAF peut arrondir au total dû à l’euro inférieur.</small>
+      </div>
+
+      <div class="field-group">
+        <label class="label">Impôt libératoire (VL)</label>
+        <label class="radio" style="border-radius:10px;">
+          <input id="includeVL" type="checkbox">
+          <span>Inclure la VL dans le calcul</span>
+        </label>
+        <small class="muted">Décochez si vous n’êtes pas au versement libératoire de l’IR. Par défaut: non inclus.</small>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Taux personnalisés</h2>
+      <div class="subgrid">
+        <div class="subcard">
+          <h3>VENTES / achat-revente</h3>
+          <div class="field-inline">
+            <label for="rateVentesSocial">Taux social (%)</label>
+            <input id="rateVentesSocial" type="number" min="0" step="0.01">
+          </div>
+          <div class="field-inline">
+            <label for="rateVentesVL">VL (%)</label>
+            <input id="rateVentesVL" type="number" min="0" step="0.01">
+          </div>
+          <div class="field-inline">
+            <label for="rateVentesCFP">CFP (%)</label>
+            <input id="rateVentesCFP" type="number" min="0" step="0.01">
+          </div>
+          <div class="field-inline">
+            <label for="rateVentesCCI">Taxe CCI vente (%)</label>
+            <input id="rateVentesCCI" type="number" min="0" step="0.01">
+          </div>
+        </div>
+
+        <div class="subcard">
+          <h3>BIC prestations</h3>
+          <div class="field-inline">
+            <label for="rateBicSocial">Taux social (%)</label>
+            <input id="rateBicSocial" type="number" min="0" step="0.01">
+          </div>
+          <div class="field-inline">
+            <label for="rateBicVL">VL (%)</label>
+            <input id="rateBicVL" type="number" min="0" step="0.01">
+          </div>
+          <div class="field-inline">
+            <label for="rateBicCFP">CFP (%)</label>
+            <input id="rateBicCFP" type="number" min="0" step="0.01">
+          </div>
+          <div class="field-inline">
+            <label for="rateBicCCI">Taxe CCI prestation (%)</label>
+            <input id="rateBicCCI" type="number" min="0" step="0.01">
+          </div>
+        </div>
+
+        <div class="subcard">
+          <h3>BNC prestations</h3>
+          <div class="field-inline">
+            <label for="rateBncSocial">Taux social (%)</label>
+            <input id="rateBncSocial" type="number" min="0" step="0.01">
+          </div>
+          <div class="field-inline">
+            <label for="rateBncVL">VL (%)</label>
+            <input id="rateBncVL" type="number" min="0" step="0.01">
+          </div>
+          <div class="field-inline">
+            <label for="rateBncCFP">CFP (%)</label>
+            <input id="rateBncCFP" type="number" min="0" step="0.01">
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-note muted">Les réglages sont enregistrés automatiquement.</div>
+    </section>
+  </main>
+
+  <script src="options.js"></script>
+</body>
+</html>
